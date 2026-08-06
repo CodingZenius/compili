@@ -1,50 +1,71 @@
-class Node:
-    def __init__(self, node_type, value=None):
-        self.type = node_type
-        self.value = value
-        self.children = []
+class Parser:
 
-    def add(self, child):
-        self.children.append(child)
+    def __init__(self, tokens):
 
+        self.tokens = tokens
 
-def parse(tokens):
+        self.ast = []
 
-    program = Node("Program")
+    def parse(self):
 
-    i = 0
+        current = {}
 
-    while i < len(tokens):
+        for token in self.tokens:
 
-        token = tokens[i]
+            key = token["key"]
+            value = token["value"]
 
-        # Skip newlines
-        if token["type"] == "NEWLINE":
-            i += 1
-            continue
+            # Start of a new intent block
+            if key == "button_element":
 
-        # Looking for:
-        # ( keyword = value )
+                if current:
+                    self.ast.append(current)
 
-        if (
-            i + 4 < len(tokens)
-            and tokens[i]["value"] == "("
-            and tokens[i + 1]["type"] == "WORD"
-            and tokens[i + 2]["value"] == "="
-            and tokens[i + 3]["type"] == "WORD"
-            and tokens[i + 4]["value"] == ")"
-        ):
+                current = {
+                    "type": "button",
+                    "element": value,
+                    "events": [],
+                    "actions": []
+                }
 
-            keyword = tokens[i + 1]["value"]
-            value = tokens[i + 3]["value"]
+            elif key == "event_listener":
 
-            node = Node(keyword, value)
+                current.setdefault("events", []).append(value)
 
-            program.add(node)
+            elif key == "action":
 
-            i += 5
-            continue
+                current.setdefault("actions", []).append(value)
 
-        i += 1
+            elif key == "navigate_to_diff_page":
 
-    return program
+                self.ast.append({
+                    "type": "navigation",
+                    "page": value
+                })
+
+            elif key == "request_from_api":
+
+                self.ast.append({
+                    "type": "fetch",
+                    "endpoint": value
+                })
+
+            elif key == "get_from_OS.env":
+
+                self.ast.append({
+                    "type": "environment",
+                    "variable": value
+                })
+
+            else:
+
+                self.ast.append({
+                    "type": "unknown",
+                    "keyword": key,
+                    "value": value
+                })
+
+        if current:
+            self.ast.append(current)
+
+        return self.ast
