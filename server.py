@@ -3,11 +3,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 
-# These modules do not exist yet.
-# We will build them next.
-from compiler.lexer import tokenize
-from compiler.parser import parse
-from compiler.generator import generate
+from compiler.lexer import Lexer
+from compiler.parser import Parser
+from compiler.generator import Generator
 
 app = FastAPI(title="Intent Language Compiler")
 
@@ -16,6 +14,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
+
     with open("static/index.html", "r", encoding="utf-8") as f:
         return f.read()
 
@@ -29,11 +28,14 @@ async def compile_code(request: Request):
 
     try:
 
-        tokens = tokenize(source)
+        lexer = Lexer(source)
+        tokens = lexer.tokenize()
 
-        ast = parse(tokens)
+        parser = Parser(tokens)
+        ast = parser.parse()
 
-        javascript = generate(ast)
+        generator = Generator(ast)
+        javascript = generator.generate()
 
         return JSONResponse({
             "success": True,
@@ -49,6 +51,7 @@ async def compile_code(request: Request):
 
 
 if __name__ == "__main__":
+
     uvicorn.run(
         "server:app",
         host="0.0.0.0",
