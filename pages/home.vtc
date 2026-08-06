@@ -1,1 +1,33 @@
+---html---
+<main class="landing">
+  <h1>Welcome</h1>
+  <p>A small VTC-powered landing page.</p>
+  <button id="signup">Sign up</button>
+</main>
 
+---css---
+body {
+  font-family: sans-serif;
+  background: #101214;
+  color: #eee;
+}
+.landing {
+  max-width: 480px;
+  margin: 80px auto;
+  text-align: center;
+}
+#signup {
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  background: #e2a03f;
+  color: #1a1305;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+---vtc---
+(button_element=signup)
+(event_listener=click)
+(action=registerUser)
+(add_css_class=active)
