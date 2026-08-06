@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VTC — Virtual Template Code</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">(</span><span class="brand-name">vtc</span><span class="brand-mark">)</span>
+      <span class="brand-tag">virtual template code</span>
+    </div>
+    <div class="topbar-actions">
+      <button id="compileBtn" class="btn btn-primary">
+        <span class="btn-glyph">→</span> compile
+      </button>
+      <button id="clearBtn" class="btn btn-ghost">clear</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="pane pane-editor">
+      <div class="pane-head">
+        <span class="pane-label">intent</span>
+        <span class="pane-ext">.vtc</span>
+      </div>
+      <div class="editor-shell">
+        <div id="lineNumbers" class="line-numbers">1</div>
+        <textarea
+          id="sourceInput"
+          class="editor"
+          spellcheck="false"
+          placeholder="(button_element=signup)&#10;(event_listener=click)&#10;(action=registerUser)"
+        ></textarea>
+      </div>
+    </section>
+
+    <div class="divider">
+      <span class="divider-glyph">⇒</span>
+    </div>
+
+    <section class="pane pane-output">
+      <div class="pane-head">
+        <span class="pane-label">bridge</span>
+        <span class="pane-ext">.js</span>
+      </div>
+      <div id="outputShell" class="output-shell">
+        <pre id="outputCode" class="output-code"><code>// Compiled JavaScript will appear here.
+// Write VTC on the left, then press "compile".</code></pre>
+        <div id="errorPanel" class="error-panel" hidden>
+          <div class="error-title" id="errorTitle">Intent Error</div>
+          <pre class="error-message" id="errorMessage"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="statusbar">
+    <span id="statusText">ready</span>
+    <span class="statusbar-sep">·</span>
+    <span>examples ship in <code>/examples</code></span>
+  </footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
