@@ -1,54 +1,101 @@
-def generate(program):
+class Generator:
 
-    output = []
+    def __init__(self, ast):
 
-    current_element = None
-    current_event = None
+        self.ast = ast
 
-    for node in program.children:
+    def generate(self):
 
-        match node.type:
+        output = []
 
-            case "button_element":
-                current_element = node.value
+        for node in self.ast:
 
-            case "event_listener":
-                current_event = node.value
+            node_type = node.get("type")
 
-            case "action":
+            # ---------------------------------
+            # Button Intent
+            # ---------------------------------
 
-                if current_element and current_event:
+            if node_type == "button":
+
+                element = node["element"]
+
+                events = node.get("events", [])
+
+                actions = node.get("actions", [])
+
+                if not events:
+
+                    events = ["click"]
+
+                for event in events:
 
                     output.append(
-f"""document.getElementById("{current_element}").addEventListener("{current_event}", () => {{
-    {node.value}();
-}});"""
+                        f'document.getElementById("{element}")'
+                        f'.addEventListener("{event}", () => {{'
                     )
 
-            case "navigate_to_diff_page":
+                    for action in actions:
+
+                        output.append(
+                            f'    {action}();'
+                        )
+
+                    output.append("});")
+                    output.append("")
+
+            # ---------------------------------
+            # Navigation
+            # ---------------------------------
+
+            elif node_type == "navigation":
+
+                page = node["page"]
 
                 output.append(
-f'window.location.href = "{node.value}";'
+                    f'window.location.href = "{page}";'
                 )
 
-            case "add_css_class":
+                output.append("")
 
-                if current_element:
-                    output.append(
-f'document.getElementById("{current_element}").classList.add("{node.value}");'
-                    )
+            # ---------------------------------
+            # API Request
+            # ---------------------------------
 
-            case "remove_css_class":
+            elif node_type == "fetch":
 
-                if current_element:
-                    output.append(
-f'document.getElementById("{current_element}").classList.remove("{node.value}");'
-                    )
-
-            case _:
+                endpoint = node["endpoint"]
 
                 output.append(
-f'// Unknown command: {node.type}'
+                    f'fetch("{endpoint}")'
                 )
 
-    return "\n\n".join(output)
+                output.append("")
+
+            # ---------------------------------
+            # Environment Variable
+            # ---------------------------------
+
+            elif node_type == "environment":
+
+                variable = node["variable"]
+
+                output.append(
+                    f'process.env["{variable}"]'
+                )
+
+                output.append("")
+
+            # ---------------------------------
+            # Unknown Intent
+            # ---------------------------------
+
+            elif node_type == "unknown":
+
+                output.append(
+                    f'// Unknown keyword: {node["keyword"]}'
+                )
+
+                output.append("")
+
+        return "\n".join(output)
