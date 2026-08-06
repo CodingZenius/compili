@@ -1,65 +1,25 @@
 import re
 
-# Characters that have meaning in the language
-SPECIAL = "(){}[]=<>/"
 
-def tokenize(source: str):
+class Lexer:
 
-    tokens = []
+    def __init__(self, source):
 
-    line = 1
-    column = 1
+        self.source = source
 
-    current = ""
+    def tokenize(self):
 
-    def push_current():
-        nonlocal current
+        tokens = []
 
-        if current.strip():
-            tokens.append({
-                "type": "WORD",
-                "value": current.strip()
-            })
+        pattern = r"\((.*?)=(.*?)\)"
 
-        current = ""
+        matches = re.findall(pattern, self.source)
 
-    for char in source:
-
-        if char == "\n":
-
-            push_current()
+        for key, value in matches:
 
             tokens.append({
-                "type": "NEWLINE",
-                "value": "\\n"
+                "key": key.strip(),
+                "value": value.strip()
             })
 
-            line += 1
-            column = 1
-            continue
-
-        if char in SPECIAL:
-
-            push_current()
-
-            tokens.append({
-                "type": "SYMBOL",
-                "value": char
-            })
-
-            column += 1
-            continue
-
-        if char.isspace():
-
-            push_current()
-
-            column += 1
-            continue
-
-        current += char
-        column += 1
-
-    push_current()
-
-    return tokens
+        return tokens
