@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Intent Compiler Beta</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Intent Compiler</h1>
+
+<p>Write Intent Language</p>
+
+<textarea id="source">
+
+(button_element=signupBtn)
+
+(event_listener=click)
+
+(action=registerUser)
+
+</textarea>
+
+<div class="buttons">
+
+<button id="compile">
+Compile
+</button>
+
+<button id="clear">
+Clear
+</button>
+
+</div>
+
+<h2>Generated JavaScript</h2>
+
+<pre id="output"></pre>
+
+</div>
+
+<script src="/static/app.js"></script>
+
+</body>
+
+</html>
